@@ -1,16 +1,44 @@
+name: Despliegue Oficial de Angular
+
 on:
   push:
     branches:
-      - "main" # change to the branch you wish to deploy from
+      - "main"
+  workflow_dispatch: 
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - id: build-publish
-      uses: bitovi/github-actions-angular-to-github-pages@v1.0.0
+    - name: 1. Descargar el código del repositorio
+      uses: actions/checkout@v4
+
+    - name: 2. Configurar el entorno de Node.js
+      uses: actions/setup-node@v4
+      with:
+        node_version: 20
+        cache: 'npm'
+
+    - name: 3. Instalar librerías de tu proyecto
+      run: npm ci
+
+    - name: 4. Compilar la aplicación de Angular
+      run: npm run build -- --configuration=production
+
+    - name: 5. Preparar los archivos para GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        # ⚠️ RECUERDA: Cambia "nombre-de-tu-proyecto" por el nombre real de tu app
+        path: './dist/app_uno/browser' 
+
+    - name: 6. Publicar el sitio web oficialmente
+      uses: actions/deploy-pages@v4
