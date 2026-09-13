@@ -25,7 +25,7 @@ jobs:
     - name: 2. Configurar el entorno de Node.js
       uses: actions/setup-node@v4
       with:
-        node_version: 20
+        node_version: 24
         cache: 'npm'
 
     - name: 3. Instalar librerías de tu proyecto
